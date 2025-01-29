@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Reset padrão */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e1e2f, #2a2a48);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Título e descrição */
+        .title-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title-container h2 {
+            font-size: 28px;
+            font-weight: bold;
+            color: #f1c40f;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .title-container p {
+            font-size: 16px;
+            color: #ddd;
+            max-width: 500px;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
+
+        .music-player {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        /* Estilização do disco */
+        .cover {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto;
+            border: 6px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        /* Centro do vinil */
+        .cover::after {
+            content: "";
+            width: 30px;
+            height: 30px;
+            background: black;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Efeito de rotação do disco */
+        .cover.playing img {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .titre h3 {
+            font-size: 18px;
+            color: #f1c40f;
+            margin-top: 10px;
+        }
+
+        .titre h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+        }
+
+        .player-controls a {
+            color: white;
+            font-size: 30px;
+            margin: 0 20px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .player-controls a:hover {
+            color: #f1c40f;
+            transform: scale(1.2);
+        }
+
+        .play-btn {
+            background: #f1c40f;
+            color: #2a2a48;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            width: 150px;
+            transition: 0.3s;
+            font-weight: bold;
+            box-shadow: 0px 5px 15px rgba(255, 221, 51, 0.6);
+        }
+
+        .play-btn i {
+            margin-right: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .play-btn:hover {
+            background: #d4ac0d;
+            transform: scale(1.05);
+        }
+
+        /* Timer */
+        .timer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin: 10px auto;
+            width: 80%;
+            color: #f1c40f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Título e descrição -->
+    <div class="title-container">
+        <h2>App Songs by R1ck</h2>
+        <p>Curta suas músicas favoritas!</p>
+    </div>
+
+    <div class="music-player">
+        {% for item in page_obj %}
+        <div class="cover" id="cover-{{ forloop.counter }}">
+            <img id="image-{{ forloop.counter }}" alt="Capa da música" src="{{ item.image.url }}"/>
+        </div>
+
+        <div class="titre">
+            <h3>{{ item.artist }}</h3>
+            <h1>{{ item.title }}</h1>
+        </div>
+
+        <!-- Timer -->
+        <div class="timer">
+            <span id="current-time-{{ forloop.counter }}">0:00</span>
+            <span id="total-time-{{ forloop.counter }}">0:00</span>
+        </div>
+
+        <div class="player-controls">
+            <a href="{% if page_obj.has_previous %}?page={{ page_obj.previous_page_number }}{% endif %}">
+                <i class="fa fa-step-backward"></i>
+            </a> 
+            <button class="play-btn" onclick="togglePlay('{{ forloop.counter }}')">
+                <i id="icon-{{ forloop.counter }}" class="fa fa-play"></i> 
+            </button>
+            <a href="{% if page_obj.has_next %}?page={{ page_obj.next_page_number }}{% endif %}">
+                <i class="fa fa-step-forward"></i>
+            </a>
+        </div>
+
+        <div class="lecteur">
+            <audio class="fc-media" id="audio-{{ forloop.counter }}" ontimeupdate="updateTimer('{{ forloop.counter }}')" onloadedmetadata="setTotalTime('{{ forloop.counter }}')">
+                <source src="{% if item.audio_file %}{{ item.audio_file.url }}{% else %}{{ item.audio_link }}{% endif %}" type="audio/mp3"/>
+            </audio>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function togglePlay(id) {
+            let audio = document.getElementById("audio-" + id);
+            let icon = document.getElementById("icon-" + id);
+            let cover = document.getElementById("cover-" + id);
+
+            if (audio.paused) {
+                audio.play();
+                icon.classList.remove("fa-play");
+                icon.classList.add("fa-pause");
+                cover.classList.add("playing");
+            } else {
+                audio.pause();
+                icon.classList.remove("fa-pause");
+                icon.classList.add("fa-play");
+                cover.classList.remove("playing");
+            }
+        }
+
+        function updateTimer(id) {
+            let audio = document.getElementById("audio-" + id);
+            document.getElementById("current-time-" + id).innerText = formatTime(audio.currentTime);
+        }
+
+        function setTotalTime(id) {
+            let audio = document.getElementById("audio-" + id);
+            document.getElementById("total-time-" + id).innerText = formatTime(audio.duration);
+        }
+
+        function formatTime(seconds) {
+            let min = Math.floor(seconds / 60);
+            let sec = Math.floor(seconds % 60);
+            return min + ":" + (sec < 10 ? "0" + sec : sec);
+        }
+    </script>
+
+</body>
+</html>

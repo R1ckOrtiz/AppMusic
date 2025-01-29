@@ -1,0 +1,89 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Player</title>
+
+  <!-- FontAwesome para os ícones -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet"/>
+  
+  <!-- MediaElement.js para o player -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelementplayer.min.css" rel="stylesheet"/>
+
+  <!-- Estilos personalizados -->
+  <link href="{% static 'style.css' %}" rel="stylesheet"/>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sofia&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  {% include 'main.html' %}
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mediaelement/4.2.7/mediaelement-and-player.min.js"></script>
+  <script src="{% static 'script.js' %}"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const audio = document.getElementById('fc-media');  // ID do player de áudio
+        const lyricsContainer = document.getElementById('song-lyrics');
+    
+        if (!lyricsContainer) {
+            console.error("Elemento #song-lyrics não encontrado.");
+            return;
+        }
+    
+        let lyricsData = [];
+    
+        // Verifica se existe o atributo "data-lyrics"
+        const lyricsAttr = lyricsContainer.getAttribute('data-lyrics');
+        
+        if (lyricsAttr) {
+            try {
+                lyricsData = JSON.parse(lyricsAttr); // Converte JSON em array
+            } catch (error) {
+                console.error("Erro ao processar as letras da música:", error);
+            }
+        } else {
+            console.warn("Nenhuma letra encontrada no atributo data-lyrics.");
+            return;
+        }
+    
+        // Verifica se realmente há letras carregadas
+        if (!lyricsData.length) {
+            console.warn("Array de letras está vazio.");
+            return;
+        }
+    
+        let currentLyricIndex = 0;
+    
+        // Atualiza a letra conforme o tempo da música
+        audio.addEventListener('timeupdate', function () {
+            const currentTime = audio.currentTime;
+    
+            while (currentLyricIndex < lyricsData.length - 1 &&
+                   currentTime >= timeToSeconds(lyricsData[currentLyricIndex + 1].time)) {
+                currentLyricIndex++;
+            }
+    
+            // Atualiza o texto da letra no container
+            lyricsContainer.innerText = lyricsData[currentLyricIndex].lyrics;
+        });
+    
+        function timeToSeconds(time) {
+            const [minutes, seconds] = time.split(':').map(parseFloat);
+            return minutes * 60 + seconds;
+        }
+    
+        console.log("Letras carregadas:", lyricsData); // Depuração para verificar se os dados estão certos
+    });
+    </script>
+    

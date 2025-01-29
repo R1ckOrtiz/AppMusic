@@ -1,0 +1,159 @@
+*:focus {
+    outline: none;
+}
+html {
+    background: rgb(0, 0, 0);
+}
+body {
+    margin: 0;
+    font-family: "Raleway", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container principal que agrupa o player e as letras */
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Music Player */
+.music-player {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    height: 700px;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9) 50%, rgb(0, 0, 0) 70%);
+    box-shadow: 1px 10px 20px 5px #ffffff;
+    position: relative;
+}
+
+/* Ajuste para evitar sobreposição da imagem */
+.cover {
+    width: 100%;
+    height: 66%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.cover img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 50px;
+}
+
+/* Estilização do título e artista */
+.titre {
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #fff;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: 500;
+    color: #f1c40f;
+}
+
+/* Player de áudio */
+.lecteur {
+    width: 100%;
+    text-align: center;
+    padding: px;
+}
+
+/* Botões */
+.player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.player-controls a {
+    font-size: 30px;
+    color: white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.player-controls a:hover {
+    color: #00fc0d;
+}
+
+/* Botão Play/Pause */
+.play-btn {
+    background: #00fc4c;
+    color: #2a2a48;
+    border: none;
+    padding: 12px 25px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+.play-btn i {
+    margin-right: 8px;
+    transition: transform 0.2s ease;
+}
+
+.play-btn:hover {
+    background: #d4ac0d;
+    transform: scale(1.05);
+}
+
+/* Ajuste da seção das letras */
+.right-section {
+    width: 60%;
+    height: auto;
+    padding: 30px;
+    background: linear-gradient(to bottom, rgba(4, 3, 3, 0.9) 50%, rgb(0, 0, 0) 70%);
+    box-shadow: 1px 10px 20px 5px #222;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.lyrics-container {
+    padding: 20px;
+    text-align: center;
+}
+
+.lyrics {
+    font-size: 24px;
+    font-family: "Sofia", sans-serif;
+    color: #88ff00;
+    line-height: 1.6;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .right-section {
+        width: 100%;
+        text-align: center;
+        padding: 20px;
+    }
+}
